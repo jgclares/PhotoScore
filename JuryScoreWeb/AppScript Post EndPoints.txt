@@ -1,0 +1,12 @@
+App Script
+
+URL Web
+https://script.google.com/macros/s/AKfycbwRmuQSBaDbADgBNFTosfDEE8BPRp4Vc-at3OBgH7bw8jsCMgzlHUhyc1jVfz6H229F/exec
+
+App Script Version 1 (Actual)
+Invocar Script App de Jurados en Hoja Puntuaciones Jurados Social de info@photosagrera.com
+curl -v -X POST -H "Content-Type: application/json;charset=UTF-8" -d "{\"juradoName\":\"Juan\",\"scores\":[1,2,3]}" "https://script.google.com/macros/s/AKfycbzweK3nVKXMpOBTUG-LyrYvB6RCPLd_CMgkDpaV-ulajRh1qPkKutMw4hxccSZQU93f/exec"
+
+AppScript Version 2 JGC
+curl -v -X POST -H "Content-Type: application/json;charset=UTF-8" -d "{\"juradoName\":\"Juan\",\"scores\":[1,2,3]}" "https://script.google.com/macros/s/AKfycbyFL-NK1vgN9uO64Y0dwBPprTrTd9BHM9n9OYaqMkdGPpVmBSbUMI_esl59ojkprJwx/exec"
+

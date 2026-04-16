@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PUNTUACIONS LLIGA SOCIAL PHOTOSAGRERA 2025-26</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos personalizados para el gradiente del título */
+        .gradient-text {
+            background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Estilos para el contenedor de la cuadrícula en pantallas pequeñas */
+        .grid-container {
+            display: grid;
+            grid-template-columns: auto 90px 1fr; /* Número + Imagen + scores */
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .scores-row {
+            display: grid;
+            grid-template-columns: repeat(13, 1fr);
+            gap: 0.75rem;
+        }
+        
+        @media (max-width: 640px) {
+            .grid-container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .scores-row {
+                grid-template-columns: repeat(auto-fit, minmax(3rem, 1fr));
+            }
+        }
+
+        /* Estilo para el contenedor de foto */
+        .photo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 90px;
+            width: 90px;
+            border-radius: 1rem;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.08);
+            flex-shrink: 0;
+        }
+
+        .photo-container:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.15);
+        }
+
+        .photo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 1rem;
+        }
+
+        /* Estilo para los botones de las celdas */
+        .cell-button {
+            height: 2.75rem;
+            min-width: 2.75rem;
+            border-radius: 0.75rem;
+            transition: all 0.2s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            font-size: 0.875rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Estilo para las celdas seleccionadas */
+        .cell-button.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* Estilo para las celdas no seleccionadas */
+        .cell-button:not(.selected) {
+            background-color: #f5f7fa;
+            color: #9ca3af;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Estilo hover para las celdas no seleccionadas */
+        .cell-button:not(.selected):hover {
+            background-color: #e8ecf1;
+            color: #667eea;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.1);
+        }
+
+        /* Estilo para modal de imagen a pantalla completa */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.95);
+            animation: fadeIn 0.3s ease-in-out;
+            backdrop-filter: blur(4px);
+        }
+
+        .image-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-modal-content {
+            max-width: 90vw;
+            max-height: 90vh;
+            position: relative;
+        }
+
+        .image-modal img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 1rem;
+        }
+
+        .image-modal-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 40px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            z-index: 1001;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .image-modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Header sticky styling */
+        .header-row {
+            display: grid;
+            grid-template-columns: auto 90px 1fr;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .scores-header {
+            display: grid;
+            grid-template-columns: repeat(13, 1fr);
+            gap: 0.75rem;
+        }
+
+        .score-label {
+            height: 2.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: #2d4ee3;
+            background-color: #f5f7fa;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Body background */
+        body {
+            background: linear-gradient(135deg, #f8f9fc 0%, #f3f4f8 100%);
+        }
+    </style>
+</head>
+<body class="text-gray-800 min-h-screen flex flex-col items-center p-6 pt-12">
+    <div class="w-full max-w-7xl">
+        <h1 class="text-2xl font-bold text-center mb-2 gradient-text">
+            PUNTUACIONS LLIGA SOCIAL PHOTOSAGRERA 2025-26
+        </h1>
+ 
+        <div id="jurado-name-section" class="flex flex-col items-center justify-center space-y-6 bg-white rounded-2xl shadow-lg p-12 mb-8">
+            <label for="jurado-name" class="text-xl font-semibold text-gray-700">
+                Si us plau, introdueix el teu nom com a jurat:
+            </label>
+            <input type="text" id="jurado-name" placeholder="Nom del Jurat" class="w-full md:w-1/2 p-4 text-lg text-gray-900 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg shadow-sm border border-gray-200 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition">
+
+            <button id="start-quiz-button" class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold py-4 px-10 rounded-lg shadow-lg hover:shadow-xl hover:from-indigo-700 hover:to-purple-700 transition duration-300 ease-in-out transform hover:scale-105">
+                Començar Votació
+            </button>
+        </div>
+
+        <div id="quiz-section" class="hidden">
+            <div class="overflow-x-auto bg-gray-200 rounded-2xl shadow-lg p-1" style="max-height: 80vh;">
+                <div class="inline-block min-w-full">
+                    <div id="quiz-header"></div>
+                    <div id="quiz-grid" class="space-y-4"></div>
+                </div>
+            </div>
+
+            <div class="mt-2 text-center bg-gray-200 rounded-2xl shadow-lg p-2">
+                <p id="validation-message" class="text-red-500 mb-4 hidden font-medium text-sm">
+                    Falten puntuacions en algunes fotos. Si us plau, revisa i completa la votació.
+                </p>
+                <div id="loading-message" class="hidden mt-1 text-gray-500 font-medium">Enviant votació...</div>
+                <div id="success-message" class="hidden mt-1 text-green-600 font-semibold">¡Votació enviada amb èxit!</div>
+                <div id="error-message" class="hidden mt-1 text-red-600 font-semibold">Error en enviar la votació. Intenta-ho de nou.</div>
+                <button id="submit-button" class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold py-4 px-10 rounded-lg shadow-lg hover:shadow-xl hover:from-indigo-700 hover:to-purple-700 transition duration-300 ease-in-out transform hover:scale-105 mt-1">
+                    Enviar Votació
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal per a visualitzar imatges a pantalla completa -->
+    <div id="image-modal" class="image-modal">
+        <div class="image-modal-content">
+            <button class="image-modal-close" onclick="closeImageModal()">&times;</button>
+            <img id="modal-image" src="" alt="Imagen ampliada">
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const juradoNameInput = document.getElementById('jurado-name');
+            const startQuizButton = document.getElementById('start-quiz-button');
+            const juradoNameSection = document.getElementById('jurado-name-section');
+            const quizSection = document.getElementById('quiz-section');
+            const quizGrid = document.getElementById('quiz-grid');
+            const quizHeader = document.getElementById('quiz-header');
+            const submitButton = document.getElementById('submit-button');
+            const validationMessage = document.getElementById('validation-message');
+            const loadingMessage = document.getElementById('loading-message');
+            const successMessage = document.getElementById('success-message');
+            const errorMessage = document.getElementById('error-message');
+            
+
+            let photosCount = 0;
+            const scores = [];
+            let imageIds = [];
+            var contestName = "";
+
+            
+            // Lista de puntuaciones a usar
+            const scoreValues = [4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10];
+            
+            // URLs de los Web Apps de Google Apps Script para POST y GET del la Spreadsheet Puntuaciones Concusrso Social 2025
+            const WEB_APP_URL_POST = 'https://script.google.com/macros/s/AKfycbxPF9G4h-ZLITGnELDxkuligq2DeBcWHemz6pPfApZOSLAsXOco9p-8LJ8fJxrFORnDig/exec';
+            const WEB_APP_URL_GET = 'https://script.google.com/macros/s/AKfycbzKQNDiI2E25m62U1hwjwdYRbjG-kTfkrb5igDw02OPRBpsdVjfGDyfMKbQKwRN7lEcPw/exec';
+
+
+            startQuizButton.addEventListener('click', async () => {
+                const juradoName = juradoNameInput.value.trim();
+
+                // Validació inicial del nom
+                if (!juradoName) {
+                    showError('Si us plau, introdueix un nom vàlid.');
+                    return;
+                }
+
+                // Obtenir configuració i comptar files des de l'App Script
+                try {
+                    const response = await fetch(WEB_APP_URL_GET);
+                    const data = await response.json();
+                    
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+
+                    // Validar dades de configuració
+                    if (!data.config || !data.config.CONCURS || !data.config.ESTAT) {
+                        throw new Error('Configuració incompleta');
+                    }
+
+                    // Establir el mes actual des de la configuració
+                    contestName = data.config.CONCURS || ''; // Obtener nombre de la hoja
+                    
+
+                    // Comprovar l'estat del concurs
+                    const contestStatus = data.config.ESTAT.toLowerCase() === "obert";
+                    if (!contestStatus) {
+                        throw new Error(`La entrada de puntuacions per al mes ${contestName} no està oberta`);
+                    }
+
+                    // Processar el recompte de files per a la generació de la quadrícula
+                    photosCount = data.numRows;
+                    if (isNaN(photosCount) || photosCount <= 0) {
+                        throw new Error('Número de fotografies invàlid');
+                    }
+
+                    // Inicialitzar l'array de puntuacions
+                    scores.length = photosCount;
+                    scores.fill(null);
+
+                    // Obtenir les ID d'imatge per a totes les fotos
+                    await fetchImageIds();
+
+                    // Mostrar la secció del qüestionari
+                    juradoNameSection.classList.add('hidden');
+                    quizSection.classList.remove('hidden');
+                    quizGrid.innerHTML = '';
+                    generateQuizGrid();
+
+                } catch (err) {
+                    showError(err.message);
+                }
+            });
+
+            const fetchImageIds = async () => {
+                try {
+                    const params = new URLSearchParams({
+                        sheetName: contestName,
+                        action: 'getAllImageIds'
+                    });
+                    
+                    const response = await fetch(`${WEB_APP_URL_GET}?${params.toString()}`);
+                    const data = await response.json();
+                    
+                    if (data.status === "success") {
+                        imageIds = data.imageIds;
+                    } else {
+                        console.error('Error fetching image IDs:', data.error);
+                        imageIds = new Array(photosCount).fill(null);
+                    }
+                } catch (err) {
+                    console.error('Error fetching image IDs:', err);
+                    imageIds = new Array(photosCount).fill(null);
+                }
+            };
+
+            const generateQuizGrid = () => {
+                // Genera la cabecera de la cuadrícula
+                
+                // Genera las filas del cuestionario
+                for (let i = 0; i < photosCount; i++) {
+                    const row = document.createElement('div');
+                    row.className = 'grid-container bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition';
+                    row.setAttribute('data-row-index', i);
+
+                    // Añadir número secuencial
+                    const photoNumber = document.createElement('div');
+                    photoNumber.className = 'flex items-center justify-end pr-4';
+                    photoNumber.innerHTML = `<span style="font-size: 1rem; font-weight: 600; color: #1e3a8a;">${i + 1}:</span>`;
+                    row.appendChild(photoNumber);
+
+                    // Añadir contenedor de foto
+                    const photoContainer = document.createElement('div');
+                    photoContainer.className = 'photo-container';
+                    photoContainer.setAttribute('data-image-id', imageIds[i] || '');
+                    photoContainer.setAttribute('data-photo-number', i + 1);
+                    
+                    if (imageIds[i]) {
+                        const img = document.createElement('img');
+                        img.src = `https://drive.google.com/thumbnail?id=${imageIds[i]}&sz=s300`;
+                        img.alt = `Imagen número ${i + 1}`;
+                        img.addEventListener('error', () => {
+                            photoContainer.innerHTML = `<span class="text-gray-400 text-xs text-center">Foto ${i + 1}</span>`;
+                        });
+                        photoContainer.appendChild(img);
+                    } else {
+                        photoContainer.innerHTML = `<span class="text-gray-400 text-xs text-center">Foto ${i + 1}</span>`;
+                    }
+                    
+                    photoContainer.addEventListener('click', () => openImageModal(imageIds[i], i + 1));
+                    row.appendChild(photoContainer);
+
+                    // Container para los scores
+                    const scoresContainer = document.createElement('div');
+                    scoresContainer.className = 'scores-row';
+
+                    scoreValues.forEach(score => {
+                        const cell = document.createElement('button');
+                        cell.className = 'cell-button';
+                        cell.setAttribute('data-score-value', score);
+                        cell.setAttribute('aria-label', `Seleccionar puntuació ${score} en la fila ${i + 1}`);
+                        cell.textContent = score;
+                        cell.addEventListener('click', handleCellClick);
+                        scoresContainer.appendChild(cell);
+                    });
+                    
+                    row.appendChild(scoresContainer);
+                    quizGrid.appendChild(row);
+                }
+            };
+
+            const handleCellClick = (event) => {
+                const cell = event.currentTarget;
+                const row = cell.closest('.grid-container');
+                const rowIndex = parseInt(row.getAttribute('data-row-index'));
+                const scoreValue = parseFloat(cell.getAttribute('data-score-value'));
+                const isSelected = cell.classList.contains('selected');
+
+                row.querySelectorAll('.cell-button').forEach(c => {
+                    c.classList.remove('selected');
+                });
+
+                if (!isSelected) {
+                    cell.classList.add('selected');
+                    scores[rowIndex] = scoreValue;
+                } else {
+                    scores[rowIndex] = null;
+                }
+                
+                validationMessage.classList.add('hidden');
+            };
+
+            submitButton.addEventListener('click', () => {
+                const isComplete = scores.every(score => score !== null);
+
+                if (!isComplete) {
+                    validationMessage.classList.remove('hidden');
+                    return;
+                }
+
+                submitButton.disabled = true;
+                loadingMessage.classList.remove('hidden');
+                validationMessage.classList.add('hidden');
+                successMessage.classList.add('hidden');
+                errorMessage.classList.add('hidden');
+
+                const data = {
+                    juradoName: juradoNameInput.value.trim(),
+                    contest: contestName,
+                    scores: scores
+                };
+
+                fetch(WEB_APP_URL_POST, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify(data),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(() => {
+                    loadingMessage.classList.add('hidden');
+                    successMessage.classList.remove('hidden');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    loadingMessage.classList.add('hidden');
+                    errorMessage.classList.remove('hidden');
+                    submitButton.disabled = false;
+                });
+            });
+
+            // Helper function to show errors
+            const showError = (message) => {
+                const errorMsg = document.createElement('p');
+                errorMsg.textContent = message;
+                errorMsg.className = 'text-red-500 mt-4 font-medium';
+                juradoNameSection.appendChild(errorMsg);
+                setTimeout(() => errorMsg.remove(), 4000);
+            };
+        });
+
+        // Functions for image modal
+        function openImageModal(imageId, photoNumber) {
+            if (!imageId) return;
+            const modal = document.getElementById('image-modal');
+            const modalImg = document.getElementById('modal-image');
+            modalImg.src = `https://lh3.googleusercontent.com/d/${imageId}=w1920-h1080`;
+            modal.classList.add('active');
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('image-modal');
+            modal.classList.remove('active');
+        }
+
+        // Close modal when clicking outside the image
+        document.getElementById('image-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'image-modal') {
+                closeImageModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeImageModal();
+            }
+        });
+    </script>
+</body>
+</html>

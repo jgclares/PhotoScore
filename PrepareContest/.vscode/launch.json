@@ -1,0 +1,42 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: prepareSocialContest - All Steps",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/prepareSocialContest.py",
+            "console": "integratedTerminal",
+            "args": ["all"],
+            "justMyCode": true
+        },
+        {
+            "name": "Python: prepareSocialContest - Prepare Data",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/prepareSocialContest.py",
+            "console": "integratedTerminal",
+            "args": ["prepare"],
+            "justMyCode": true
+        },
+        {
+            "name": "Python: prepareSocialContest - Folders Creation",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/prepareSocialContest.py",
+            "console": "integratedTerminal",
+            "args": ["folders"],
+            "justMyCode": true
+        },
+        {
+            "name": "Python: prepareSocialContest - Upload",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/prepareSocialContest.py",
+            "console": "integratedTerminal",
+            "args": ["upload"],
+            "justMyCode": true
+        }
+
+    ]
+}
