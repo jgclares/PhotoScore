@@ -41,7 +41,7 @@ social_base_path = "/users/photosagrera/SOCIALES"
 social_originals_path = f"{social_base_path}/SOCIAL_2025-2026"  # Append the month name to get final path for each contest, i.e. /06_FEBRER
 social_numbered_path = f"{social_base_path}/PENDIENTES DE FALLO/AL JURADO"
 social_randomize_order = False  # Whether to randomize the order of photos in the destination sheet (for better anonymization during judging)
-social_sort_column_index = 3  # Column index for random sort key Author name (0-based, column E in the sheet)
+social_sort_column_index = 4  # Column index for random sort key Author name (0-based, column E in the sheet)
 social_dest_url_col_index = 5  # Column index for Photo URL ID in the source data (0-based, column G in the sheet)
 
 #Agustí Umbert: Source spreadsheet (from Google Drive) usuario fmlasagrera@photosagrera.com 
