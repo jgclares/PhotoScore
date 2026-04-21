@@ -31,7 +31,7 @@ CLIENT_ID = "9fe1b9ad74d3891f14e1270708c20780"
 CLIENT_SECRET = "6d350ec3781bb674ef0dabe1688a2060"
 REFRESH_TOKEN = "rt-znct5efv2boz6avorywgpsxwnu8w"
 
-# Source spreadsheet (from Google Drive) usuario info@photosagrera.com
+# Social contest: Source spreadsheet parameters  usuario info@photosagrera.com de Google Drive
 # "Mi Unidad > PUNTUACIONES SOCIAL > Puntuaciones Concurso Social"                          
 social_source_sheet_id = '1uehoM3-I3yEFTjgwDwiCkOwGRToKqJm57thwpK254uE'
 social_origen_numcols = 4
@@ -44,7 +44,7 @@ social_randomize_order = False  # Whether to randomize the order of photos in th
 social_sort_column_index = 4  # Column index for random sort key Author name (0-based, column E in the sheet)
 social_dest_url_col_index = 5  # Column index for Photo URL ID in the source data (0-based, column G in the sheet)
 
-#Agustí Umbert: Source spreadsheet (from Google Drive) usuario fmlasagrera@photosagrera.com 
+#Agustí Umbert Contest: Source spreadsheet parameters  usuario fmlasagrera@photosagrera.com de Google Drive
 # "Mi Unidad > CONCURSOS> CONCURSO 2026 > AGUSTI UMBERT""
 aumbert_source_sheet_id = '1yb0m44PtxLNhTJCQ46bRM4XqaL2SGHQy6XJA0JBChlU'
 aumbert_origen_numcols = 8
@@ -57,7 +57,7 @@ aumbert_randomize_order = True
 aumbert_sort_column_index = 10  # Column index for random sort key Ramdom Sort key (0-based, column K in the sheet)
 aumbert_dest_url_col_index = 9  # Column index for Photo URL ID in the source data (0-based, column J in the sheet)
 
-#Cartel FM: Source spreadsheet (from Google Drive) usuario fmlasagrera@phosagrera.com
+#Cartel FM Contest: Source spreadsheet parameters  usuario fmlasagrera@photosagrera.com de Google Drive
 # "Mi Unidad > CONCURSOS> CONCURSO 2026 > CARTEL FESTA MAJOR"
 cartel_source_sheet_id = '1cjnmoPTwAvlL_NY44d-wT6wC2ev6r2IVki4Jwe8PTwM'
 cartel_origen_numcols = 5
@@ -476,7 +476,7 @@ def create_destination_rows_dataset(source_data, google_drive_api):
 
 
 
-def create_destination_spreadsheet(source_workbook, all_rows):
+def create_destination_worksheet(source_workbook, all_rows):
     """Create and populate 'Puntuaciones' sheet in source workbook from source data using batch operations"""
     logger.info(f"Creating '{destination_sheet_name}' sheet in source workbook")
     
@@ -510,7 +510,7 @@ def create_destination_spreadsheet(source_workbook, all_rows):
         logger.error(f"Error creating '{destination_sheet_name}' sheet: {str(e)}")
         raise
 
-def format_destination_spreadsheet(sheet, num_rows):
+def format_destination_worksheet(sheet, num_rows):
     # Fill up the column headers row
     #column_headers = [["NUM.", "NOMBRE", "FICHERO JPG", "Total Puntos" ]]
     #sheet.update(column_headers, "A1:D1")
@@ -930,18 +930,19 @@ def main():
         
         logger.info(f"Starting Concurso Social with action: {action}")
 
-        # Create destination spreadsheet from source data
+        # Create destination worksheet from source data in the source workbook
         if action in ["prepare", "all"]:
             logger.info("=" * 60)
-            logger.info("Retrieving data from the source Excel spreadsheet")
+            logger.info("Retrieving data from the source forms responses worksheet")
             logger.info("=" * 60)
             
-            # Read source spreadsheet
-           
-            # source_worksheet = source_workbook.worksheet(source_sheet_name)
-            source_worksheet = source_workbook.get_worksheet(0) #  Use the first worksheet as source, which should contain the form responses
+            # Read source worksheet 
+            #source_worksheet = source_workbook.worksheet(source_sheet_name)
+
+            # Use the first worksheet as source, it contains the form responses
+            source_worksheet = source_workbook.get_worksheet(0) 
             source_data = source_worksheet.get_all_values()
-            logger.info(f"Read {len(source_data) - 1} rows from source spreadsheet")
+            logger.info(f"Read {len(source_data) - 1} rows from source worksheet")
 
 
         
@@ -955,15 +956,15 @@ def main():
             
            
             # Sort dataset by random sort key column (index dest_, column K)
-            sort_column_index = contest_params["sort_column_index"][selected_contest] # Index of the random sort key column in the dataset (after adding Filename column, it's now at index 10)
+            sort_column_index = contest_params["sort_column_index"][selected_contest] 
             sorted_rows = sort_worksheet_by_column(all_rows, sort_column_index)  # Flat list: [header, row1, row2, ...]
 
             # Number the photos sequentially in the sorted order
             numbered_rows = number_photos(sorted_rows)  # Modifies in-place, returns reference
 
             # Create 'Puntuaciones' sheet in source workbook
-            dest_worksheet = create_destination_spreadsheet(source_workbook, numbered_rows) 
-            format_destination_spreadsheet(dest_worksheet, len(numbered_rows) - 1)  # Exclude header row 
+            dest_worksheet = create_destination_worksheet(source_workbook, numbered_rows) 
+            format_destination_worksheet(dest_worksheet, len(numbered_rows) - 1)  # Exclude header row 
 
         #  Create folder structure in HiDrive
         if action in ["folders", "all"]:
