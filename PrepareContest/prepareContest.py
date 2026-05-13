@@ -35,10 +35,10 @@ REFRESH_TOKEN = "rt-znct5efv2boz6avorywgpsxwnu8w"
 # "Mi Unidad > PUNTUACIONES SOCIAL > Puntuaciones Concurso Social"                          
 social_source_sheet_id = '1uehoM3-I3yEFTjgwDwiCkOwGRToKqJm57thwpK254uE'
 social_origen_numcols = 4
-social_headers = ["Nº Foto", "Archivo", "Timestamp", "Email", "Autor", "Photo URL ID","Total Puntos"]
+social_headers = ["Nº Foto", "Archivo", "Timestamp", "Email", "Autor", "Photo URL ID", "AL JURADO Photo URL ID", "Total Puntos"]
 social_dest_numcols = len(social_headers)
 social_base_path = "/users/photosagrera/SOCIALES"
-social_originals_path = f"{social_base_path}/SOCIAL_2025-2026"  # Append the month name to get final path for each contest, i.e. /06_FEBRER
+social_originals_path = f"{social_base_path}/PENDIENTE PUBLICAR"  # Append the month name to get final path for each contest, i.e. /06_FEBRER
 social_numbered_path = f"{social_base_path}/PENDIENTES DE FALLO/AL JURADO"
 social_randomize_order = False  # Whether to randomize the order of photos in the destination sheet (for better anonymization during judging)
 social_sort_column_index = 4  # Column index for random sort key Author name (0-based, column E in the sheet)
@@ -48,26 +48,26 @@ social_dest_url_col_index = 5  # Column index for Photo URL ID in the source dat
 # "Mi Unidad > CONCURSOS> CONCURSO 2026 > AGUSTI UMBERT""
 aumbert_source_sheet_id = '1yb0m44PtxLNhTJCQ46bRM4XqaL2SGHQy6XJA0JBChlU'
 aumbert_origen_numcols = 8
-aumbert_headers = ["Nº Foto", "Archivo", "Timestamp", "Autor", "Email", "Teléfono", "Es Miembro", "Federado", "ID federación", "Photo URL ID", "Random Sort Key", "Total Puntos"]
+aumbert_headers = ["Nº Foto", "Archivo", "Timestamp", "Autor", "Email", "Teléfono", "Es Miembro", "Federado", "ID federación", "Photo URL ID", "AL JURADO Photo URL ID", "Random Sort Key", "Total Puntos"]
 aumbert_dest_numcols = len(aumbert_headers)
 aumbert_base_path = "/users/photosagrera/PREMI AGUSTI UMBERT/Concurso 2026"
 aumbert_originals_path = f"{aumbert_base_path}/Originales"
 aumbert_numbered_path = f"{aumbert_base_path}/Numeradas"
 aumbert_randomize_order = True
-aumbert_sort_column_index = 10  # Column index for random sort key Ramdom Sort key (0-based, column K in the sheet)
+aumbert_sort_column_index = 11  # Column index for random sort key Ramdom Sort key (0-based, column L in the sheet) - increased by 1 due to AL JURADO column insertion
 aumbert_dest_url_col_index = 9  # Column index for Photo URL ID in the source data (0-based, column J in the sheet)
 
 #Cartel FM Contest: Source spreadsheet parameters  usuario fmlasagrera@photosagrera.com de Google Drive
 # "Mi Unidad > CONCURSOS> CONCURSO 2026 > CARTEL FESTA MAJOR"
 cartel_source_sheet_id = '1cjnmoPTwAvlL_NY44d-wT6wC2ev6r2IVki4Jwe8PTwM'
 cartel_origen_numcols = 5
-cartel_headers = ["Nº Foto", "Archivo", "Timestamp", "Autor", "Email", "Teléfono", "Photo URL ID", "Random Sort Key", "Total Puntos"]
+cartel_headers = ["Nº Foto", "Archivo", "Timestamp", "Autor", "Email", "Teléfono", "Photo URL ID", "AL JURADO Photo URL ID", "Random Sort Key", "Total Puntos"]
 cartel_dest_numcols = len(cartel_headers)
 cartel_base_path = "/users/photosagrera/CARTEL FESTA MAJOR/Concurso 2026"
 cartel_originals_path = f"{cartel_base_path}/Originales"
 cartel_numbered_path = f"{cartel_base_path}/Numeradas"
 cartel_randomize_order = False
-cartel_sort_column_index = 7  # Column index for random sort key Random Sort key (0-based, column H in the sheet)
+cartel_sort_column_index = 8  # Column index for random sort key Random Sort key (0-based, column I in the sheet) - increased by 1 due to AL JURADO column insertion
 cartel_dest_url_col_index = 6  # Column index for Photo URL ID in the source data (0-based, column G in the sheet)
 
 # Global dictionary to access contest parameters by name
@@ -83,7 +83,10 @@ contest_params = {
     "numbered_path": [social_numbered_path, aumbert_numbered_path, cartel_numbered_path],
     "randomize_order": [social_randomize_order, aumbert_randomize_order, cartel_randomize_order],
     "sort_column_index": [social_sort_column_index, aumbert_sort_column_index, cartel_sort_column_index],
-    "dest_url_col_index": [social_dest_url_col_index, aumbert_dest_url_col_index, cartel_dest_url_col_index]    
+    "dest_url_col_index": [social_dest_url_col_index, aumbert_dest_url_col_index, cartel_dest_url_col_index],
+    "copy_url_col_index": [social_dest_url_col_index+1, aumbert_dest_url_col_index+1, cartel_dest_url_col_index+1], 
+    "al_jurado_parent_folder": ["PUNTUACIONES SOCIAL", "PUNTUACIONES SOCIAL", "PUNTUACIONES SOCIAL"],
+    "al_jurado_folder_name": ["AL JURADO", "AL JURADO", "AL JURADO"]
 }
 
 # Column properties configuration: width (in pixels) and hidden status
@@ -98,6 +101,7 @@ column_properties = {
     "Federado": {"width": 100, "hidden": False},
     "ID federación": {"width": 120, "hidden": False},
     "Photo URL ID": {"width": 150, "hidden": True},
+    "AL JURADO Photo URL ID": {"width": 150, "hidden": True},
     "Random Sort Key": {"width": 80, "hidden": True},
     "Total Puntos": {"width": 130, "hidden": False}
 }
@@ -108,7 +112,7 @@ folder_path = "Mi Unidad > PUNTUACIONES SOCIAL > Puntuacines Concurso Social" # 
 
 # Google Sheets API credentials
 scopes = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
-credentials = Credentials.from_service_account_file("credentials.json", scopes=scopes)
+credentials = Credentials.from_service_account_file("credentials.json", scopes=scopes).with_subject("info@photosagrera.com")
 
 
 #Selected contest index: 0 for Puntuaciones Concurso Social, 1 for Agustí Umbert, 2 for Cartel Fiesta Mayor
@@ -331,6 +335,95 @@ class GoogleDriveAPI:
             return request.execute()
 
         return retry_with_backoff(_rename, operation_name=f"rename_file({file_id}, {new_name})")
+
+    def find_folder_by_name(self, folder_name, parent_folder_id=None):
+        """Find a folder by name, optionally under a parent folder
+        
+        Args:
+            folder_name: Name of the folder to find
+            parent_folder_id: Optional parent folder ID to search under
+            
+        Returns:
+            Folder ID if found, None if not found
+        """
+        def _find():
+            query = f"name='{folder_name}' and mimeType='application/vnd.google-apps.folder' and trashed=false"
+            if parent_folder_id:
+                query += f" and '{parent_folder_id}' in parents"
+#           else:
+#               query += " and 'root' in parents"  # root no longer works reliably, so we search across all folders and filter in code
+
+            
+            request = self.service.files().list(q=query, spaces='drive', corpora='user', fields='files(id, name)', pageSize=10)
+            result = request.execute()
+            files = result.get('files', [])
+            
+            if files:
+                return files[0]['id']  # Return first match
+            return None
+        
+        return retry_with_backoff(_find, operation_name=f"find_folder_by_name({folder_name})")
+
+    def create_folder(self, folder_name, parent_folder_id=None):
+        """Create a new folder in Google Drive
+        
+        Args:
+            folder_name: Name of the folder to create
+            parent_folder_id: Optional parent folder ID
+            
+        Returns:
+            Folder ID of the newly created folder
+        """
+        def _create():
+            file_metadata = {
+                'name': folder_name,
+                'mimeType': 'application/vnd.google-apps.folder'
+            }
+            if parent_folder_id:
+                file_metadata['parents'] = [parent_folder_id]
+            
+            request = self.service.files().create(body=file_metadata, fields='id')
+            result = request.execute()
+            return result['id']
+        
+        return retry_with_backoff(_create, operation_name=f"create_folder({folder_name})")
+
+    def copy_file(self, source_file_id, destination_folder_id, new_name):
+        """Copy a file to a destination folder with a new name
+        
+        Args:
+            source_file_id: ID of the file to copy
+            destination_folder_id: ID of the destination folder
+            new_name: New name for the copied file
+            
+        Returns:
+            Dictionary with 'id' containing the new file ID
+        """
+        def _copy():
+            file_metadata = {
+                'name': new_name,
+                'parents': [destination_folder_id]
+            }
+            request = self.service.files().copy(fileId=source_file_id, body=file_metadata, fields='id')
+            result = request.execute()
+            return result
+        
+        return retry_with_backoff(_copy, operation_name=f"copy_file({source_file_id} -> {new_name})")
+
+    def delete_folder(self, folder_id):
+        """Delete a folder from Google Drive with retry logic
+        
+        Args:
+            folder_id: ID of the folder to delete
+            
+        Returns:
+            None
+        """
+        def _delete():
+            response = self.service.files().delete(fileId=folder_id).execute()
+            return response
+        
+        return retry_with_backoff(_delete, operation_name=f"delete_folder({folder_id})")
 
 
 def parse_google_drive_url(url):
@@ -825,6 +918,152 @@ def rename_photos_in_google_drive(google_drive_api, numbered_rows, selected_cont
         raise
 
 
+def create_al_jurado_folder(google_drive_api, selected_contest):
+    """Create the AL JURADO folder structure in Google Drive
+    
+    Finds the parent folder "PUNTUACIONES SOCIAL", removes existing AL JURADO folder if present,
+    and creates a new empty AL JURADO folder.
+    
+    Args:
+        google_drive_api: GoogleDriveAPI instance
+        selected_contest: Contest index to get the correct AL JURADO configuration
+        
+    Returns:
+        Folder ID of the newly created AL JURADO folder
+        
+    Raises:
+        Exception if parent folder "PUNTUACIONES SOCIAL" doesn't exist
+    """
+    logger.info("Creating AL JURADO folder structure in Google Drive")
+    
+    try:
+        parent_folder_name = contest_params["al_jurado_parent_folder"][selected_contest]
+        al_jurado_folder_name = contest_params["al_jurado_folder_name"][selected_contest]
+        
+        # Find parent folder "PUNTUACIONES SOCIAL"
+        parent_folder_id = google_drive_api.find_folder_by_name(parent_folder_name)
+        
+        if not parent_folder_id:
+            error_msg = f"Parent folder '{parent_folder_name}' not found in Google Drive. Please ensure it exists before proceeding."
+            logger.error(error_msg)
+            raise FileNotFoundError(error_msg)
+        
+        logger.info(f"Found parent folder '{parent_folder_name}' with ID: {parent_folder_id}")
+        
+        # Check if AL JURADO folder already exists
+        al_jurado_folder_id = google_drive_api.find_folder_by_name(al_jurado_folder_name, parent_folder_id)
+        
+        if al_jurado_folder_id:
+            logger.info(f"AL JURADO folder already exists with ID: {al_jurado_folder_id}, deleting it to start fresh")
+            try:
+                google_drive_api.delete_folder(al_jurado_folder_id)
+                logger.info(f"Successfully deleted existing AL JURADO folder {al_jurado_folder_id}")
+            except Exception as e:
+                logger.error(f"Failed to delete existing AL JURADO folder {al_jurado_folder_id}: {str(e)}")
+                raise
+        
+        # Create new AL JURADO folder
+        new_al_jurado_folder_id = google_drive_api.create_folder(al_jurado_folder_name, parent_folder_id)
+        logger.info(f"Created new AL JURADO folder with ID: {new_al_jurado_folder_id}")
+        
+        return new_al_jurado_folder_id
+        
+    except FileNotFoundError:
+        raise
+    except Exception as e:
+        logger.error(f"Error creating AL JURADO folder: {str(e)}")
+        raise
+
+
+def copy_photos_to_al_jurado(numbered_rows, google_drive_api, al_jurado_folder_id, selected_contest):
+    """Copy photos to AL JURADO folder with sequential numbering
+    
+    Iterates over numbered_rows and copies each photo to the AL JURADO folder with
+    a sequential filename (0001.jpg, 0002.jpg, etc.). Updates the AL JURADO Photo URL ID
+    column with the new file ID.
+    
+    Args:
+        numbered_rows: List of rows with structure [photo_number, filename, ...other_cols..., original_url, al_jurado_url]
+                      as modified during processing
+        google_drive_api: GoogleDriveAPI instance
+        al_jurado_folder_id: ID of the AL JURADO folder
+        selected_contest: Contest index to get the correct column indices
+        
+    Returns:
+        Updated numbered_rows with AL JURADO Photo URL IDs populated
+    """
+    logger.info("Starting to copy photos to AL JURADO folder")
+    
+    try:
+        dest_url_col_index = contest_params["dest_url_col_index"][selected_contest]
+        copy_url_col_index = contest_params["copy_url_col_index"][selected_contest]
+        copied_count = 0
+        
+        for row_index, row in enumerate(numbered_rows[1:], start=2):  # Skip header
+            try:
+                photo_number = row[0]
+                filename = row[1] if len(row) > 1 else ""
+                
+                # Get the Google Drive URL of the original file
+                url = row[dest_url_col_index] if len(row) > dest_url_col_index else None
+                
+                if not url or not url.strip():
+                    logger.warning(f"Row {row_index}: No URL found, skipping copy to AL JURADO")
+                    # Still need to ensure the column exists
+                    if copy_url_col_index >= len(row):
+                        row.append("")
+                    continue
+                
+                # Extract file ID and filename from original
+                try:
+                    file_id = parse_google_drive_url(url)
+                except ValueError as e:
+                    logger.error(f"Row {row_index}: Invalid Google Drive URL {url}: {str(e)}")
+                    if copy_url_col_index >= len(row):
+                        row.append("")
+                    continue
+                
+                # Get file extension from current filename
+                file_ext = os.path.splitext(filename)[1] if filename else ".jpg"
+                new_filename = f"{photo_number}{file_ext}"
+                
+                # Copy file to AL JURADO folder
+                try:
+                    copy_result = google_drive_api.copy_file(file_id, al_jurado_folder_id, new_filename)
+                    new_file_id = copy_result.get('id')
+                    
+                    # Create Google Drive URL for the copied file
+                    new_url = f"https://drive.google.com/file/d/{new_file_id}/view"
+                    
+                    # Ensure row has enough columns
+                    while len(row) <= copy_url_col_index:
+                        row.append("")
+                    
+                    # Update the AL JURADO Photo URL ID column
+                    row[copy_url_col_index] = new_url
+                    
+                    logger.info(f"Row {row_index}: Successfully copied file to AL JURADO as {new_filename} (ID: {new_file_id})")
+                    copied_count += 1
+                    
+                except Exception as e:
+                    logger.error(f"Row {row_index}: Failed to copy file {filename} to AL JURADO: {str(e)}")
+                    # Ensure column exists even on failure
+                    if copy_url_col_index >= len(row):
+                        row.append("")
+                    continue
+                    
+            except Exception as e:
+                logger.error(f"Row {row_index}: Unexpected error during AL JURADO copy: {str(e)}")
+                continue
+        
+        logger.info(f"Photo copy process completed: {copied_count} files successfully copied to AL JURADO")
+        return numbered_rows
+        
+    except Exception as e:
+        logger.error(f"Error in copy_photos_to_al_jurado: {str(e)}")
+        raise
+
+
 def get_command_line_arguments():
     """Get command line arguments"""
     while True:
@@ -962,6 +1201,13 @@ def main():
             # Number the photos sequentially in the sorted order
             numbered_rows = number_photos(sorted_rows)  # Modifies in-place, returns reference
 
+            # Create AL JURADO folder and copy photos to it
+            logger.info("=" * 60)
+            logger.info("Creating AL JURADO folder and copying photos")
+            logger.info("=" * 60)
+            al_jurado_folder_id = create_al_jurado_folder(google_drive_api, selected_contest)
+            numbered_rows = copy_photos_to_al_jurado(numbered_rows, google_drive_api, al_jurado_folder_id, selected_contest)
+
             # Create 'Puntuaciones' sheet in source workbook
             dest_worksheet = create_destination_worksheet(source_workbook, numbered_rows) 
             format_destination_worksheet(dest_worksheet, len(numbered_rows) - 1)  # Exclude header row 
@@ -998,9 +1244,10 @@ def main():
                 dest_workbook = gspread_client.open_by_key(contest_params["source_sheet_id"][selected_contest])
                 dest_worksheet = dest_workbook.worksheet(destination_sheet_name)
                 numbered_rows = dest_worksheet.get_all_values()
-            
-            rename_count = rename_photos_in_google_drive(google_drive_api, numbered_rows, selected_contest)
-            logger.info(f"***Successfully renamed {rename_count} files of {len(numbered_rows)-1} photos in Google Drive ***")
+
+            # Rename is not longer needed as we are copying the files to AL JURADO with the correct name, the AL JURADO folder will have the correctly numbered files for the jury.
+            # rename_count = rename_photos_in_google_drive(google_drive_api, numbered_rows, selected_contest)
+            # logger.info(f"***Successfully renamed {rename_count} files of {len(numbered_rows)-1} photos in Google Drive ***")
 
         logger.info("=" * 60)
         logger.info("Process completed successfully!")
